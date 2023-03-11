@@ -48,62 +48,62 @@ class TeacherPage extends StatelessWidget {
   }
 }
 
-class UserPage extends StatelessWidget {
-  final user;
-  final String firstName;
-  final String lastName;
-  final String parentName;
-  final String parentLastName;
-  final String studenID;
-  final String phoneNumber;
-  final String tagID;
+// class UserPage extends StatelessWidget {
+//   final user;
+//   final String firstName;
+//   final String lastName;
+//   final String parentName;
+//   final String parentLastName;
+//   final String studenID;
+//   final String phoneNumber;
+//   final String tagID;
 
-  UserPage({
-    super.key,
-    @required this.user,
-    required this.firstName,
-    required this.lastName,
-    required this.parentName,
-    required this.parentLastName,
-    required this.studenID,
-    required this.phoneNumber,
-    required this.tagID,
-  });
+//   UserPage({
+//     super.key,
+//     @required this.user,
+//     required this.firstName,
+//     required this.lastName,
+//     required this.parentName,
+//     required this.parentLastName,
+//     required this.studenID,
+//     required this.phoneNumber,
+//     required this.tagID,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Hi !',
-              style: TextStyle(fontSize: 50),
-            ),
-            Text('Welcome to User Page', style: TextStyle(fontSize: 30)),
-            Text(firstName + lastName, style: TextStyle(fontSize: 20)),
-            Text(parentName + parentLastName, style: TextStyle(fontSize: 20)),
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Text(
+//               'Hi !',
+//               style: TextStyle(fontSize: 50),
+//             ),
+//             Text('Welcome to User Page', style: TextStyle(fontSize: 30)),
+//             Text(firstName + lastName, style: TextStyle(fontSize: 20)),
+//             Text(parentName + parentLastName, style: TextStyle(fontSize: 20)),
 
-            Text('Email: ${user.email}'),
-            // Text('Email: ${user.uid}'),
-            ElevatedButton(
-              onPressed: () => _signOut(context),
-              child: Text('Sign out'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+//             Text('Email: ${user.email}'),
+//             // Text('Email: ${user.uid}'),
+//             ElevatedButton(
+//               onPressed: () => _signOut(context),
+//               child: Text('Sign out'),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
 
-  void _signOut(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
-  }
-}
+//   void _signOut(BuildContext context) async {
+//     await FirebaseAuth.instance.signOut();
+//     // ignore: use_build_context_synchronously
+//     Navigator.pushReplacement(
+//         context, MaterialPageRoute(builder: (context) => LoginPage()));
+//   }
+// }
 
 class DriverPage extends StatelessWidget {
   final user;

@@ -5,6 +5,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:project_flutter/Screen/teacher/teacher_home_page.dart';
 import 'package:project_flutter/Screen/test_home.dart';
+import 'package:project_flutter/Screen/user/home.dart';
+import 'package:project_flutter/Screen/user/user_home_page.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class LoginPage extends StatefulWidget {
@@ -21,7 +23,6 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   late String _email, _password;
   bool _ishidden = true;
-  @override
   void _toggleVisibility() {
     setState(
       () {
@@ -166,72 +167,72 @@ class _LoginPageState extends State<LoginPage> {
             .child(user!.uid)
             .get();
         var data = snapshot.value as Map; //ข้อมูล user_data
+        String role = data['role'];
+        // await database.ref
+        //     .child('users')
+        //     .child('user_roles')
+        //     .child(user.email!.replaceAll('.', ','))
+        //     .get()
+        //     .then((DataSnapshot snapshot) {
+        //   String role = snapshot.value as String; // ระบุระดับ user
 
-        await database.ref
-            .child('users')
-            .child('user_roles')
-            .child(user.email!.replaceAll('.', ','))
-            .get()
-            .then((DataSnapshot snapshot) {
-          String role = snapshot.value as String; // ระบุระดับ user
-
-          if (role == 'teacher') {
-            // ถ้าครูล็อกอิน
-            String firstName = data['first_name'];
-            String lastName = data['last_name'];
-            String phoneNumber = data['phone'];
-            btnController.success();
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => TeacherHomePage(
-                          firstName: firstName,
-                          lastName: lastName,
-                          user: user,
-                          phoneNumber: phoneNumber,
-                        )));
-          } else if (role == "user") {
-            // ถ้าค user ล็อกอิน
-            String firstName = data['first_name'];
-            String lastName = data['last_name'];
-            String parentName = data['parent_name'];
-            String parentLastName = data['parent_lastname'];
-            String studentID = data['id'];
-            String phoneNumber = data['phone'];
-            String tagId = data['tagid'];
-            btnController.success();
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => UserPage(
-                          firstName: firstName,
-                          lastName: lastName,
-                          parentName: parentName,
-                          parentLastName: parentLastName,
-                          user: user,
-                          phoneNumber: phoneNumber,
-                          studenID: studentID,
-                          tagID: tagId,
-                        )));
-          } else {
-            // ถ้าคนขับรถล็อกอิน
-            btnController.success();
-            String firstName = data['first_name'];
-            String lastName = data['last_name'];
-            String phoneNumber = data['phone'];
-            String carID = data['car_id'];
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => DriverPage(
-                          firstName: firstName,
-                          lastName: lastName,
-                          user: user,
-                          carId: carID,
-                          phoneNumber: phoneNumber,
-                        )));
-          }
-        });
+        if (role == 'teacher') {
+          // ถ้าครูล็อกอิน
+          String firstName = data['first_name'];
+          String lastName = data['last_name'];
+          String phoneNumber = data['phone'];
+          btnController.success();
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => TeacherHomePage(
+                        firstName: firstName,
+                        lastName: lastName,
+                        user: user,
+                        phoneNumber: phoneNumber,
+                      )));
+        } else if (role == "user") {
+          // ถ้าค user ล็อกอิน
+          String firstName = data['first_name'];
+          String lastName = data['last_name'];
+          String parentName = data['parent_name'];
+          String parentLastName = data['parent_lastname'];
+          String studentID = data['id'];
+          String phoneNumber = data['phone'];
+          String tagId = data['tagid'];
+          btnController.success();
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => UserHomePage(
+                        firstName: firstName,
+                        lastName: lastName,
+                        parentName: parentName,
+                        parentLastName: parentLastName,
+                        user: user,
+                        phoneNumber: phoneNumber,
+                        studenID: studentID,
+                        tagID: tagId,
+                      )));
+        } else {
+          // ถ้าคนขับรถล็อกอิน
+          btnController.success();
+          String firstName = data['first_name'];
+          String lastName = data['last_name'];
+          String phoneNumber = data['phone'];
+          String carID = data['car_id'];
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DriverPage(
+                        firstName: firstName,
+                        lastName: lastName,
+                        user: user,
+                        carId: carID,
+                        phoneNumber: phoneNumber,
+                      )));
+        }
+        // });
       } catch (e) {
         btnController.reset();
 

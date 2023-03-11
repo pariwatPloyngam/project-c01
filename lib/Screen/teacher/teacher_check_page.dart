@@ -143,6 +143,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:project_flutter/Component/color.dart';
 
 class StudentPage extends StatefulWidget {
   const StudentPage({super.key});
@@ -181,16 +182,28 @@ class _StudentPageState extends State<StudentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
-        title: Text("ข้อมูลนักเรียน"),
+        backgroundColor: AppColor.main,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_rounded,
+            color: AppColor.mainText,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: const Text(
+          "ข้อมูลนักเรียน",
+          style: TextStyle(color: AppColor.mainText),
+        ),
       ),
       body: Container(
-        decoration: BoxDecoration(shape: BoxShape.rectangle),
+        decoration: const BoxDecoration(shape: BoxShape.rectangle),
         child: ListView.builder(
           itemCount: data.length,
           itemBuilder: (context, index) {
             return Container(
-              height: 200,
+              height: 100,
               margin: const EdgeInsets.all(10),
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -209,32 +222,35 @@ class _StudentPageState extends State<StudentPage> {
                         offset: Offset(1, 1),
                         blurRadius: 8)
                   ]),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    data[index].email,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w400),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    '${data[index].firstName}  ${data[index].firstName}',
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w400),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    data[index].phone,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w400),
-                  ),
-                ],
+              child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data[index].email,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w400),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      '${data[index].firstName}  ${data[index].firstName}',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w400),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      data[index].phone,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w400),
+                    ),
+                  ],
+                ),
               ),
             );
             // ListTile(

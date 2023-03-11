@@ -402,121 +402,179 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:intl/intl.dart';
+import 'package:project_flutter/Component/clock_widget.dart';
+import 'package:project_flutter/Component/color.dart';
 
-class ReportPage extends StatefulWidget {
+class Check extends StatefulWidget {
   @override
-  State<ReportPage> createState() => _ReportPageState();
+  State<Check> createState() => _CheckState();
 }
 
-class _ReportPageState extends State<ReportPage> {
+class _CheckState extends State<Check> {
   final databaseReference = FirebaseDatabase.instance.ref();
+  late String currentDate;
+  bool selectWidget = false;
+
+  getDate() {
+    var now = DateTime.now();
+    var formatter = DateFormat('yyyy-M-dd');
+    // String formattedDate = formatter.format(now);
+    setState(() {
+      currentDate = formatter.format(now);
+    });
+    print(currentDate);
+  }
+
+  @override
+  void initState() {
+    getDate();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.amber,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_rounded),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: StreamBuilder(
-        stream: databaseReference.child('access').onValue,
+    return Builder(builder: (context) {
+      return StreamBuilder(
+        stream: databaseReference.child('access').child(currentDate).onValue,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             // Get the data from the snapshot
             var data = snapshot.data.snapshot.value;
-            List<dynamic> dataList = data.values.toList() ?? [];
+            List<dynamic> dataList = data?.values.toList() ?? [];
             if (dataList.isEmpty) {
               // Show a loading indicator if the dataList is empty
               return const Center(
-                child: CircularProgressIndicator(),
+                child: Text(
+                  'ยังไม่มีการบันทึกข้อมูลสำหรับวันนี้',
+                  style: TextStyle(fontSize: 22, color: Colors.grey),
+                ),
               );
             } else {
               // Build the UI with the data
-              return ListView.builder(
-                itemCount: dataList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 14, horizontal: 14),
-                      child: Container(
-                        height: 150,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            // ignore: prefer_const_literals_to_create_immutables
-                            boxShadow: [
-                              const BoxShadow(
-                                  color: Colors.transparent,
-                                  spreadRadius: 0,
-                                  offset: Offset(0, 0),
-                                  blurRadius: 8),
-                              const BoxShadow(
-                                  color: Color.fromARGB(255, 221, 221, 221),
-                                  spreadRadius: 1,
-                                  offset: Offset(1, 1),
-                                  blurRadius: 8)
-                            ]),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 20,
-                              height: 150,
-                              decoration: BoxDecoration(
-                                  color: (dataList[index]['status'] == '0')
-                                      ? Colors.white
-                                      : (dataList[index]['status'] == '1')
-                                          ? Colors.amber.shade300
-                                          : Colors.green,
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      bottomLeft: Radius.circular(10))),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: CircleAvatar(
-                                  radius: 35,
-                                  backgroundColor: Colors.amber.shade200),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 16, right: 50),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "${dataList[index]['first_name']} ${dataList[index]['last_name']}",
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  Text(
-                                    dataList[index]['status'] == '1'
-                                        ? 'อยู่บนรถ'
-                                        : 'ลงจากรถเเล้ว',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                ],
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 25),
+                child: ListView.builder(
+                  itemCount: dataList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 14, horizontal: 14),
+                        child: Container(
+                          height: 150,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              // ignore: prefer_const_literals_to_create_immutables
+                              boxShadow: [
+                                const BoxShadow(
+                                    color: Colors.transparent,
+                                    spreadRadius: 0,
+                                    offset: Offset(0, 0),
+                                    blurRadius: 8),
+                                const BoxShadow(
+                                    color: Color.fromARGB(255, 221, 221, 221),
+                                    spreadRadius: 1,
+                                    offset: Offset(1, 1),
+                                    blurRadius: 8)
+                              ]),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 20,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                    color: (dataList[index]['status'] == '0')
+                                        ? Colors.white
+                                        : (dataList[index]['status'] == '1')
+                                            ? Colors.grey
+                                            : Colors.green.shade600,
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        bottomLeft: Radius.circular(10))),
                               ),
-                            ),
-                          ],
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 32, 16, 0),
+                                child: CircleAvatar(
+                                    backgroundImage:
+                                        AssetImage('assets/image/study1.jpg'),
+                                    radius: 35,
+                                    backgroundColor: Colors.amber.shade200),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 16, right: 50),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${dataList[index]['first_name']} ${dataList[index]['last_name']}",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.grey.shade800,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "สถานะ : "
+                                      '${(dataList[index]['status'] == '1' ? 'อยู่บนรถ' : 'ลงจากรถเเล้ว')}',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.grey.shade800,
+                                      ),
+                                    ),
+                                    Text(
+                                      "เบอร์โทร : -",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.grey.shade800,
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "เวลขึ้น: --/--",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.grey.shade800,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          "เวลาลง : --/--",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.grey.shade800,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               );
             }
           } else {
-            // Show a loading indicator while the data is loading
-            return const CircularProgressIndicator();
+            return Container(
+                child: Center(
+                    child: const CircularProgressIndicator(
+              color: AppColor.main,
+            )));
           }
         },
-      ),
-    );
+      );
+    });
   }
 }
