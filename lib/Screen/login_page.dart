@@ -3,9 +3,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:project_flutter/Component/color.dart';
+import 'package:project_flutter/Screen/driver/driver_home_page.dart';
 import 'package:project_flutter/Screen/teacher/teacher_home_page.dart';
-import 'package:project_flutter/Screen/test_home.dart';
-import 'package:project_flutter/Screen/user/home.dart';
+
 import 'package:project_flutter/Screen/user/user_home_page.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -87,12 +88,14 @@ class _LoginPageState extends State<LoginPage> {
                                   ? 'Email can\'t be empty'
                                   : null,
                               onSaved: (value) => _email = value!,
-                              cursorColor: Colors.amber,
-                              style: const TextStyle(color: Colors.black54),
+                              cursorColor: AppColor.mainIcon,
+                              style: const TextStyle(
+                                  color: AppColor.mainText, fontSize: 20),
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: "Email or Phone number",
-                                hintStyle: TextStyle(color: Colors.grey[400]),
+                                hintText: "อีเมลล์",
+                                hintStyle: TextStyle(
+                                    color: Colors.grey[400], fontSize: 20),
                               ),
                             ),
                           ),
@@ -104,8 +107,9 @@ class _LoginPageState extends State<LoginPage> {
                                   ? 'Password can\'t be empty'
                                   : null,
                               onSaved: (value) => _password = value!,
-                              cursorColor: Colors.amber,
-                              style: const TextStyle(color: Colors.black54),
+                              cursorColor: AppColor.mainIcon,
+                              style: const TextStyle(
+                                  color: AppColor.mainText, fontSize: 20),
                               decoration: InputDecoration(
                                 suffixIcon: IconButton(
                                   icon: Icon(_ishidden
@@ -113,12 +117,13 @@ class _LoginPageState extends State<LoginPage> {
                                       : Icons.visibility),
                                   color: _ishidden
                                       ? Colors.grey.shade400
-                                      : Colors.amber.shade500,
+                                      : AppColor.mainIcon,
                                   onPressed: _toggleVisibility,
                                 ),
                                 border: InputBorder.none,
-                                hintText: "Password",
-                                hintStyle: TextStyle(color: Colors.grey[400]),
+                                hintText: "รหัสผ่าน",
+                                hintStyle: TextStyle(
+                                    color: Colors.grey[400], fontSize: 20),
                               ),
                               obscureText: _ishidden ? true : false,
                             ),
@@ -132,16 +137,17 @@ class _LoginPageState extends State<LoginPage> {
                     RoundedLoadingButton(
                       loaderStrokeWidth: 3,
                       width: MediaQuery.of(context).size.width,
-                      color: Colors.amber,
+                      color: AppColor.main,
                       controller: btnController,
                       onPressed: () async {
                         FocusScope.of(context).unfocus();
                         _submit();
                       },
-                      child: const Text("Login",
+                      child: const Text("เข้าสู่ระบบ",
                           style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
+                              color: AppColor.mainText,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18)),
                     ),
                   ],
                 ),

@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:project_flutter/Component/color.dart';
 import 'package:project_flutter/Screen/login_page.dart';
@@ -21,6 +22,7 @@ class AddUserPage extends StatefulWidget {
 
 class _AddUserPageState extends State<AddUserPage> {
   String _value = '';
+  String _checkValue = '';
   bool autoClose = true;
   final RoundedLoadingButtonController btnController =
       RoundedLoadingButtonController();
@@ -29,8 +31,8 @@ class _AddUserPageState extends State<AddUserPage> {
 
   late Timer _timer;
   var status = 1;
-  var stdClass = 0;
-  var stdRoom = 0;
+  String stdClass = '0';
+  String stdRoom = '0';
   late String email,
       password,
       firstName,
@@ -42,14 +44,46 @@ class _AddUserPageState extends State<AddUserPage> {
       carId,
       tagID;
 
+  // void test() {
+  //   final FirebaseDatabase database = FirebaseDatabase.instance;
+  //   database
+  //       .ref()
+  //       .child('users')
+  //       .child('user_data')
+  //       .child('')
+  //       // .orderByChild('tagid')
+  //       .once()
+  //       .then((value) {
+  //     Map<dynamic, dynamic> data = value.snapshot.value as Map;
+  //     print(data['tagid']);
+  // if (value.snapshot.value != null) {
+  //   data = value.snapshot.value as Map;
+
+  //   // setState(() {
+  //   //   data = data.toString();
+  //   // });
+  //   print(data.containsKey(_value));
+  //   // Process the data here
+  // } else {
+  //   // setState(() {
+  //   //   string = '0';
+  //   // });
+  //   // Handle the case when there are no records
+  //   // print("$string");
+  // }
+  //   });
+  // }
+
   void insertCardFunction() {
     final database = FirebaseDatabase.instance.ref();
     database.ref.child('status').set('1');
     database.ref.child('register').get().then((DataSnapshot snapshot) {
       String tagRfid = snapshot.value as String;
       if (tagRfid.isNotEmpty) {
+        // test();
         // closeDialog();
         // print('$tagRfid');
+        // if(tagRfid == )
         _timer = Timer(const Duration(seconds: 2), () {
           setState(() {
             _value = tagRfid;
@@ -108,7 +142,7 @@ class _AddUserPageState extends State<AddUserPage> {
   }
 
   getStdClass() {
-    if (stdClass == 0) {
+    if (stdClass == '0') {
       return Text(
         'ระดับชั้น',
         style: TextStyle(fontSize: 17, color: Colors.grey.shade700),
@@ -122,7 +156,7 @@ class _AddUserPageState extends State<AddUserPage> {
   }
 
   getStdRoom() {
-    if (stdRoom == 0) {
+    if (stdRoom == '0') {
       return Text(
         'ห้อง',
         style: TextStyle(fontSize: 17, color: Colors.grey.shade700),
@@ -138,6 +172,7 @@ class _AddUserPageState extends State<AddUserPage> {
   @override
   void initState() {
     super.initState();
+    // test();
   }
 
   @override
@@ -212,7 +247,7 @@ class _AddUserPageState extends State<AddUserPage> {
                   },
                   child: const Text("ลงทะเบียน",
                       style: TextStyle(
-                          color: Colors.white,
+                          color: AppColor.mainText,
                           fontWeight: FontWeight.bold,
                           fontSize: 20)),
                 ),
@@ -364,7 +399,8 @@ class _AddUserPageState extends State<AddUserPage> {
                     Icons.phone,
                     color: Colors.grey,
                   )),
-              keyboardType: TextInputType.phone),
+              keyboardType: TextInputType.phone,
+              inputFormatters: [LengthLimitingTextInputFormatter(10)]),
         ),
         Container(
           padding: const EdgeInsets.all(8.0),
@@ -436,7 +472,7 @@ class _AddUserPageState extends State<AddUserPage> {
               },
               decoration: const InputDecoration(
                   border: InputBorder.none,
-                  labelText: 'ชื่อ',
+                  labelText: 'ชื่อนักเรียน',
                   prefixIcon: Icon(
                     Icons.person_outline_rounded,
                     color: Colors.grey,
@@ -461,7 +497,7 @@ class _AddUserPageState extends State<AddUserPage> {
             },
             decoration: const InputDecoration(
                 border: InputBorder.none,
-                labelText: 'นามสกุล',
+                labelText: 'นามสกุลนักเรียน',
                 prefixIcon: Icon(
                   Icons.people_alt_outlined,
                   color: Colors.grey,
@@ -529,20 +565,22 @@ class _AddUserPageState extends State<AddUserPage> {
             ),
           ),
           child: TextFormField(
-              validator: (value) {
-                return value == null ? 'First name can\'t be empty' : null;
-              },
-              onSaved: (value) {
-                phone = value!;
-              },
-              decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  labelText: 'เบอร์โทรผู้ปกครอง',
-                  prefixIcon: Icon(
-                    Icons.phone,
-                    color: Colors.grey,
-                  )),
-              keyboardType: TextInputType.phone),
+            validator: (value) {
+              return value == null ? 'First name can\'t be empty' : null;
+            },
+            onSaved: (value) {
+              phone = value!;
+            },
+            decoration: const InputDecoration(
+                border: InputBorder.none,
+                labelText: 'เบอร์โทรผู้ปกครอง',
+                prefixIcon: Icon(
+                  Icons.phone,
+                  color: Colors.grey,
+                )),
+            keyboardType: TextInputType.phone,
+            inputFormatters: [LengthLimitingTextInputFormatter(10)],
+          ),
         ),
         Container(
             padding: const EdgeInsets.only(
@@ -612,12 +650,13 @@ class _AddUserPageState extends State<AddUserPage> {
               },
               decoration: const InputDecoration(
                   border: InputBorder.none,
-                  labelText: 'รหัสนักศึกษา',
+                  labelText: 'รหัสนักศึกษา 10 หลัก',
                   prefixIcon: Icon(
                     Icons.assignment_ind_outlined,
                     color: Colors.grey,
                   )),
-              keyboardType: TextInputType.number),
+              keyboardType: TextInputType.number,
+              inputFormatters: [LengthLimitingTextInputFormatter(10)]),
         ),
         Container(
           padding: const EdgeInsets.all(8.0),
@@ -726,27 +765,27 @@ class _AddUserPageState extends State<AddUserPage> {
         onSelected: (value) {
           if (value == 1) {
             setState(() {
-              stdClass = value;
+              stdClass = '$value';
             });
           } else if (value == 2) {
             setState(() {
-              stdClass = value;
+              stdClass = '$value';
             });
           } else if (value == 3) {
             setState(() {
-              stdClass = value;
+              stdClass = '$value';
             });
           } else if (value == 4) {
             setState(() {
-              stdClass = value;
+              stdClass = '$value';
             });
           } else if (value == 5) {
             setState(() {
-              stdClass = value;
+              stdClass = '$value';
             });
           } else if (value == 6) {
             setState(() {
-              stdClass = value;
+              stdClass = '$value';
             });
           }
         });
@@ -797,15 +836,15 @@ class _AddUserPageState extends State<AddUserPage> {
         onSelected: (value) {
           if (value == 1) {
             setState(() {
-              stdRoom = value;
+              stdRoom = '$value';
             });
           } else if (value == 2) {
             setState(() {
-              stdRoom = value;
+              stdRoom = '$value';
             });
           } else if (value == 3) {
             setState(() {
-              stdRoom = value;
+              stdRoom = '$value';
             });
           }
         });
@@ -912,7 +951,8 @@ class _AddUserPageState extends State<AddUserPage> {
                     Icons.phone,
                     color: Colors.grey,
                   )),
-              keyboardType: TextInputType.phone),
+              keyboardType: TextInputType.phone,
+              inputFormatters: [LengthLimitingTextInputFormatter(10)]),
         ),
         Container(
           padding: const EdgeInsets.all(8.0),

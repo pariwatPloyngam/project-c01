@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
 import 'package:project_flutter/Component/clock_widget.dart';
+import 'package:project_flutter/Component/color.dart';
 
 class Record extends StatefulWidget {
   @override
@@ -99,9 +100,20 @@ class _RecordState extends State<Record> {
                                         itemBuilder:
                                             (BuildContext context, int index) {
                                           var user = userList[index];
-                                          return Text(user['first_name'] +
-                                              ' ' +
-                                              user['last_name']);
+                                          return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 32, top: 4, bottom: 8),
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    user?['first_name'],
+                                                    style: TextStyle(
+                                                        color:
+                                                            AppColor.mainText,
+                                                        fontSize: 18),
+                                                  ),
+                                                ],
+                                              ));
                                         },
                                       )
                                     : const SizedBox(),

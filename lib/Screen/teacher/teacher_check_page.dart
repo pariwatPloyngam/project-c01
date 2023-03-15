@@ -1,144 +1,3 @@
-// // ignore_for_file: prefer_interpolation_to_compose_strings
-
-// import 'package:firebase_database/firebase_database.dart';
-// import 'package:firebase_database/ui/firebase_animated_list.dart';
-// import 'package:flutter/material.dart';
-
-// class StudentPage extends StatefulWidget {
-//   const StudentPage({super.key});
-
-//   @override
-//   State<StudentPage> createState() => _StudentPageState();
-// }
-
-// class _StudentPageState extends State<StudentPage> {
-//   // Query dbref =
-//   //     FirebaseDatabase.instance.ref().child("users").child('user_data');
-//   final database = FirebaseDatabase.instance.ref();
-
-//   Future getData() async {
-//     await database
-//         .child('users')
-//         .child('user_data')
-//         .orderByChild('role')
-//         .equalTo('user')
-//         .once()
-//         .then((snapshot) {
-//       Map<dynamic, dynamic> values = snapshot.snapshot.value as dynamic;
-//       // if (values != null) {
-//       // }
-//     });
-//   }
-
-//   @override
-//   void initState() {
-//     // TODO: implement initState
-//     super.initState();
-//     getData();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         appBar: AppBar(
-//           backgroundColor: Colors.transparent,
-//           elevation: 0,
-//           leading: IconButton(
-//             icon: Icon(
-//               Icons.arrow_back_ios_rounded,
-//               color: Colors.amber.shade700,
-//               size: 30,
-//             ),
-//             onPressed: () {
-//               Navigator.pop(context);
-//             },
-//           ),
-//         ),
-//         body: FutureBuilder(
-//           future: getData(),
-//           builder: (BuildContext context, snapshot) {
-//             if (snapshot.hasData) {
-//               return ListView.builder(
-//                 itemCount: snapshot.data.length,
-//                 itemBuilder: (BuildContext context, int index) {
-//                   return ListTile(
-//                     title: Text(snapshot.data[index].email),
-//                     subtitle: Text(snapshot.data[index].firstName +
-//                         " " +
-//                         snapshot.data[index].lastName),
-//                   );
-//                 },
-//               );
-//             } else if (snapshot.hasError) {
-//               return Text("${snapshot.error}");
-//             }
-
-//             return CircularProgressIndicator();
-//           },
-//         )
-//         // FirebaseAnimatedList(
-//         //   query: dbref,
-//         //   itemBuilder: (BuildContext context, DataSnapshot snapshot,
-//         //       Animation<double> animation, int index) {
-//         //     Map data = snapshot.value as Map;
-//         //     data['key'] = snapshot.key;
-//         //     if (data.isEmpty) {
-//         //       return const CircularProgressIndicator();
-//         //     }
-//         //     return listItem(data: data);
-//         //   },
-//         // ),
-//         );
-//   }
-// }
-
-// Widget listItem({required Map data}) {
-//   return Container(
-//     margin: const EdgeInsets.all(10),
-//     padding: const EdgeInsets.all(10),
-//     decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(16),
-//         // ignore: prefer_const_literals_to_create_immutables
-//         boxShadow: [
-//           const BoxShadow(
-//               color: Colors.transparent,
-//               spreadRadius: 0,
-//               offset: Offset(0, 0),
-//               blurRadius: 8),
-//           const BoxShadow(
-//               color: Color.fromARGB(255, 221, 221, 221),
-//               spreadRadius: 1,
-//               offset: Offset(1, 1),
-//               blurRadius: 8)
-//         ]),
-//     child: Column(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Text(
-//           'ID : ' + data['id'],
-//           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-//         ),
-//         const SizedBox(
-//           height: 5,
-//         ),
-//         Text(
-//           'Name : ' + data['first_name'] + data['last_name'],
-//           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-//         ),
-//         const SizedBox(
-//           height: 5,
-//         ),
-//         Text(
-//           'TAG ID : ' + data['tagid'],
-//           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-//         ),
-//       ],
-//     ),
-//   );
-// }
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -159,6 +18,10 @@ class _StudentPageState extends State<StudentPage> {
   @override
   void initState() {
     super.initState();
+    getUserData();
+  }
+
+  void getUserData() {
     _database.ref().child("users").child("user_data").once().then((snapshot) {
       Map<dynamic, dynamic> values = snapshot.snapshot.value as dynamic;
       values.forEach((key, value) {
@@ -167,7 +30,12 @@ class _StudentPageState extends State<StudentPage> {
             email: value['email'],
             firstName: value['first_name'],
             lastName: value['last_name'],
+            parentName: value['parent_name'],
+            parentLastName: value['parent_lastname'],
             phone: value['phone'],
+            stdclass: value['class'],
+            room: value['room'],
+            id: value['id'],
             role: value['role'],
           );
           setState(() {
@@ -203,7 +71,7 @@ class _StudentPageState extends State<StudentPage> {
           itemCount: data.length,
           itemBuilder: (context, index) {
             return Container(
-              height: 100,
+              // height: 120,
               margin: const EdgeInsets.all(10),
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -222,35 +90,65 @@ class _StudentPageState extends State<StudentPage> {
                         offset: Offset(1, 1),
                         blurRadius: 8)
                   ]),
-              child: SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      data[index].email,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w400),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      '${data[index].firstName}  ${data[index].firstName}',
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w400),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      data[index].phone,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w400),
-                    ),
-                  ],
-                ),
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(12, 12, 24, 0),
+                        child: CircleAvatar(
+                          radius: 30,
+                          backgroundImage:
+                              AssetImage('assets/image/study1.jpg'),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${data[index].firstName}  ${data[index].lastName}',
+                              style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColor.mainText),
+                            ),
+                            Text(
+                              'ชั้น ป. ${data[index].stdclass} ห้อง ${data[index].room}',
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColor.mainText),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Text(
+                              'รหัส ${data[index].id}',
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColor.mainText),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  'เบอร์ผู้ปกครอง ${data[index].phone}',
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColor.mainText),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             );
             // ListTile(
@@ -273,11 +171,21 @@ class UserData {
   String lastName;
   String phone;
   String role;
+  String parentName;
+  String parentLastName;
+  String stdclass;
+  String room;
+  String id;
 
   UserData(
       {required this.email,
       required this.firstName,
       required this.lastName,
+      required this.parentName,
+      required this.parentLastName,
       required this.phone,
-      required this.role});
+      required this.role,
+      required this.stdclass,
+      required this.room,
+      required this.id});
 }

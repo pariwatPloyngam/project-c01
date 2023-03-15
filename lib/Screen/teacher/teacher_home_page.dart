@@ -2,9 +2,11 @@
 // ignore_for_file: avoid_unnecessary_containers
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:project_flutter/Component/color.dart';
 
 import 'package:project_flutter/Screen/login_page.dart';
@@ -27,168 +29,340 @@ class TeacherHomePage extends StatefulWidget {
 }
 
 class _TeacherHomePageState extends State<TeacherHomePage> {
+  final databaseReference = FirebaseDatabase.instance.ref();
+
+  late String currentDate;
+
+  String? string;
+
+  getDate() {
+    var now = DateTime.now();
+    var formatter = DateFormat('yyyy-M-dd');
+    // String formattedDate = formatter.format(now);
+    setState(() {
+      currentDate = formatter.format(now);
+    });
+    print(currentDate);
+  }
+
+  void getStdNum() {
+    databaseReference
+        .child('access')
+        .child('2023-3-14')
+        .orderByChild('status')
+        .equalTo("1")
+        .onValue
+        .listen((values) {
+      Map<dynamic, dynamic> data;
+      if (values.snapshot.value != null) {
+        data = values.snapshot.value as Map;
+
+        setState(() {
+          string = data.length.toString();
+        });
+        print(string);
+        // Process the data here
+      } else {
+        setState(() {
+          string = '0';
+        });
+        // Handle the case when there are no records
+        print("$string");
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    getDate();
+    getStdNum();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var heigth = MediaQuery.of(context).size.height;
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.amber.shade500,
-      //   elevation: 0,
-      //   title: const Text('Home Page'),
-      // ),
-      // drawer: Drawer(
-      //   backgroundColor: Colors.amber.shade500,
-      //   child: Column(
-      //     children: [],
-      //   ),
-      // ),
-      body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: FractionalOffset.topCenter,
-                end: FractionalOffset.bottomCenter,
-                stops: const [0.0, 1.0],
-                colors: [AppColor.mainIcon, Colors.amber.shade200])),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 100, left: 36),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'สวัสดี',
-                    style: TextStyle(
-                        fontSize: 26,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text('คุณ ${widget.firstName} ${widget.lastName}',
-                      style: const TextStyle(
-                          fontSize: 26,
+      body: Stack(
+        children: [
+          Container(
+            width: width,
+            height: 150,
+            color: AppColor.main,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 70, left: 14, right: 14),
+                child: Stack(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
                           color: Colors.white,
-                          fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 100),
-              child: Column(
-                children: [
-                  Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          borderRadius: BorderRadius.circular(10),
+                          // ignore: prefer_const_literals_to_create_immutables
+                          boxShadow: [
+                            const BoxShadow(
+                                color: Colors.transparent,
+                                spreadRadius: 0,
+                                offset: Offset(0, 0),
+                                blurRadius: 8),
+                            const BoxShadow(
+                                color: Color.fromARGB(255, 173, 173, 173),
+                                spreadRadius: 1,
+                                offset: Offset(1, 1),
+                                blurRadius: 8)
+                          ]),
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Column(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: MenuButton(
-                                onTap: () {
-                                  Navigator.pushNamed(context, '/student');
-                                },
-                                title: const Text(
-                                  'STUDENT',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColor.mainText),
+                            Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'สวัสดี',
+                                      style: TextStyle(
+                                          fontSize: 22,
+                                          color: AppColor.mainText,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Row(
+                                      children: [
+                                        const Text(
+                                          'คุณ',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: AppColor.mainText,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          widget.firstName,
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              color: AppColor.mainText,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          widget.lastName,
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              color: AppColor.mainText,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
+                                      child: Container(
+                                          height: 1,
+                                          width: 320,
+                                          color: Colors.grey.shade400),
+                                    ),
+                                  ],
                                 ),
-                                icon: const Icon(
-                                  Icons.people_alt_rounded,
-                                  size: 70,
-                                  color: AppColor.mainIcon,
-                                ),
-                                width: width / 2.8,
-                                higth: width / 2.4,
-                              ),
+                              ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: MenuButton(
-                                onTap: () {
-                                  Navigator.pushNamed(context, '/location');
-                                },
-                                title: const Text(
-                                  'LOCATION',
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              // ignore: prefer_const_literals_to_create_immutables
+                              children: [
+                                const Text(
+                                  'จำนวนนักเรียนบนรถ',
                                   style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColor.mainText),
+                                    fontSize: 20,
+                                    color: AppColor.mainText,
+                                  ),
                                 ),
-                                icon: const Icon(
-                                  Icons.location_on,
-                                  size: 70,
-                                  color: AppColor.mainIcon,
+                                Text(
+                                  string == '0' ? '0' : '$string',
+                                  style: const TextStyle(
+                                      fontSize: 28,
+                                      color: AppColor.mainText,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                                width: width / 2.8,
-                                higth: width / 2.4,
-                              ),
-                            ),
+                              ],
+                            )
                           ],
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: MenuButton(
-                                onTap: () {
-                                  Navigator.pushNamed(context, '/adduser');
-                                },
-                                title: const Text(
-                                  'ADD USER',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColor.mainText),
-                                ),
-                                icon: const Icon(
-                                  Icons.person_add_alt_rounded,
-                                  size: 70,
-                                  color: AppColor.mainIcon,
-                                ),
-                                width: width / 2.8,
-                                higth: width / 2.4,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: MenuButton(
-                                onTap: () {
-                                  Navigator.pushNamed(context, '/report');
-                                },
-                                title: const Text(
-                                  'REPORT',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColor.mainText),
-                                ),
-                                icon: const Icon(
-                                  Icons.fact_check,
-                                  size: 70,
-                                  color: AppColor.mainIcon,
-                                ),
-                                width: width / 2.8,
-                                higth: width / 2.4,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.settings,
+                                color: AppColor.mainText,
+                              )),
+                          IconButton(
+                              onPressed: () {
+                                showConfirmLogout();
+                              },
+                              icon: const Icon(
+                                Icons.logout,
+                                color: AppColor.mainText,
+                              )),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+              // Padding(
+              //   padding: const EdgeInsets.fromLTRB(40, 30, 40, 0),
+              //   child: Container(
+              //     width: MediaQuery.of(context).size.width,
+              //     height: 50,
+              //     decoration: BoxDecoration(
+              //         borderRadius: BorderRadius.circular(20),
+              //         color: Colors.white,
+              //         boxShadow: [
+              //           const BoxShadow(
+              //               color: Colors.transparent,
+              //               spreadRadius: 0,
+              //               offset: Offset(0, 0),
+              //               blurRadius: 8),
+              //           const BoxShadow(
+              //               color: Color.fromARGB(255, 173, 173, 173),
+              //               spreadRadius: 1,
+              //               offset: Offset(1, 1),
+              //               blurRadius: 8)
+              //         ]),
+              //   ),
+              // ),
+              Padding(
+                padding: const EdgeInsets.only(top: 50),
+                child: Column(
+                  children: [
+                    Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: MenuButton(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/student');
+                                  },
+                                  title: const Text(
+                                    'ข้อมูลนักเรียน',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColor.mainText),
+                                  ),
+                                  icon: const Icon(
+                                    Icons.people_alt_rounded,
+                                    size: 70,
+                                    color: AppColor.main,
+                                  ),
+                                  width: width / 2.8,
+                                  higth: width / 2.4,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: MenuButton(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/location');
+                                  },
+                                  title: const Text(
+                                    'ตำแหน่ง',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColor.mainText),
+                                  ),
+                                  icon: const Icon(
+                                    Icons.location_on,
+                                    size: 70,
+                                    color: AppColor.main,
+                                  ),
+                                  width: width / 2.8,
+                                  higth: width / 2.4,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: MenuButton(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/adduser');
+                                  },
+                                  title: const Text(
+                                    'เพิ่มผู้ใช้งาน',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColor.mainText),
+                                  ),
+                                  icon: const Icon(
+                                    Icons.person_add_alt_rounded,
+                                    size: 70,
+                                    color: AppColor.main,
+                                  ),
+                                  width: width / 2.8,
+                                  higth: width / 2.4,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: MenuButton(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/report');
+                                  },
+                                  title: const Text(
+                                    'การโดยสาร',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColor.mainText),
+                                  ),
+                                  icon: const Icon(
+                                    Icons.fact_check,
+                                    size: 70,
+                                    color: AppColor.main,
+                                  ),
+                                  width: width / 2.8,
+                                  higth: width / 2.4,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -197,7 +371,7 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
     showCupertinoModalPopup(
         context: context,
         builder: (context) => CupertinoActionSheet(
-            message: const Text("Would you like to log out?"),
+            message: const Text("คุณต้องการออกจากระบบหรือไม่?"),
             actions: [
               CupertinoActionSheetAction(
                 onPressed: () {
@@ -209,13 +383,13 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
                       (route) => false);
                 },
                 child: const Text(
-                  "Log Out",
+                  "ออกจากระบบ",
                   style: TextStyle(color: Colors.red),
                 ),
               )
             ],
             cancelButton: CupertinoActionSheetAction(
-              child: const Text("Cancel"),
+              child: const Text("ยกเลิก"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -292,7 +466,7 @@ class _MenuButtonState extends State<MenuButton> {
                             offset: Offset(0, 0),
                             blurRadius: 8),
                         const BoxShadow(
-                            color: Color.fromARGB(255, 189, 167, 97),
+                            color: Color.fromARGB(255, 173, 173, 173),
                             spreadRadius: 1,
                             offset: Offset(1, 1),
                             blurRadius: 8)
@@ -304,10 +478,10 @@ class _MenuButtonState extends State<MenuButton> {
                             offset: Offset(0, 0),
                             blurRadius: 8),
                         const BoxShadow(
-                            color: Color.fromARGB(255, 214, 214, 214),
+                            color: Color.fromARGB(255, 217, 217, 217),
                             spreadRadius: 1,
                             offset: Offset(1, 1),
-                            blurRadius: 3)
+                            blurRadius: 8)
                       ],
                 borderRadius: const BorderRadius.all(Radius.circular(24))),
             height: _isElevated ? widget.higth : widget.higth - 3,

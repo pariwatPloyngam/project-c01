@@ -7,7 +7,6 @@ import 'package:project_flutter/Screen/teacher/teacher_location_page.dart';
 import 'package:project_flutter/Screen/teacher/teacher_check_page.dart';
 import 'package:project_flutter/Screen/login_page.dart';
 import 'package:project_flutter/Screen/teacher/test.dart';
-import 'package:project_flutter/Screen/test_regis.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,12 +22,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/login',
       routes: {
-        '/testre': (context) => const RegisterTest(),
         '/login': (context) => const LoginPage(),
         '/student': (context) => const StudentPage(),
-        '/location': (context) => LocationPage(),
+        '/location': (context) => const LocationPage(),
         '/adduser': (context) => const AddUserPage(),
-        '/report': (context) => ReportPage(),
+        '/report': (context) => const ReportPage(),
       },
     );
   }

@@ -462,7 +462,7 @@ class _CheckState extends State<Check> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 14, horizontal: 14),
                         child: Container(
-                          height: 150,
+                          height: 100,
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
@@ -527,33 +527,33 @@ class _CheckState extends State<Check> {
                                       ),
                                     ),
                                     Text(
-                                      "เบอร์โทร : -",
+                                      "เบอร์โทร : ${dataList[index]['']}",
                                       style: TextStyle(
                                         fontSize: 18,
                                         color: Colors.grey.shade800,
                                       ),
                                     ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "เวลขึ้น: --/--",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.grey.shade800,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          "เวลาลง : --/--",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.grey.shade800,
-                                          ),
-                                        ),
-                                      ],
-                                    )
+                                    // Row(
+                                    //   children: [
+                                    //     Text(
+                                    //       "เวลขึ้น: --/--",
+                                    //       style: TextStyle(
+                                    //         fontSize: 18,
+                                    //         color: Colors.grey.shade800,
+                                    //       ),
+                                    //     ),
+                                    //     SizedBox(
+                                    //       width: 10,
+                                    //     ),
+                                    //     Text(
+                                    //       "เวลาลง : --/--",
+                                    //       style: TextStyle(
+                                    //         fontSize: 18,
+                                    //         color: Colors.grey.shade800,
+                                    //       ),
+                                    //     ),
+                                    //   ],
+                                    // )
                                   ],
                                 ),
                               ),

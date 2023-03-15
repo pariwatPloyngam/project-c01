@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:intl/intl.dart';
+import 'package:project_flutter/Component/color.dart';
 
 class ClockTH {
   static List<String> month = [
@@ -104,7 +105,7 @@ class _ClockWidgetHorizontalStyleState
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         final dateTime = DateTime.now();
         _timeStr = DateFormat('HH:mm').format(dateTime);
@@ -129,16 +130,16 @@ class _ClockWidgetHorizontalStyleState
         Text(
           _timeStr,
           style: GoogleFonts.antonio(
-              fontSize: 20,
-              color: Colors.grey.shade800,
+              fontSize: 40,
+              color: AppColor.mainText,
               fontWeight: FontWeight.bold),
         ),
-        SizedBox(
+        const SizedBox(
           width: 8,
         ),
         Text(
           _dateStr,
-          style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
+          style: const TextStyle(fontSize: 28, color: AppColor.mainText),
         ),
       ],
     );
