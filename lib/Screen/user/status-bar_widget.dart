@@ -1,8 +1,11 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:project_flutter/Component/color.dart';
+import 'package:project_flutter/Screen/login_page.dart';
 import 'package:project_flutter/Screen/user/user_home_page.dart';
+import 'package:project_flutter/Service/auth.dart';
 
 class StatusBar extends StatefulWidget {
   const StatusBar({
@@ -55,112 +58,187 @@ class _StatusBarState extends State<StatusBar> {
           var data = snapshot.data?.snapshot?.value;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 120,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  // ignore: prefer_const_literals_to_create_immutables
-                  boxShadow: [
-                    const BoxShadow(
-                        color: Colors.transparent,
-                        spreadRadius: 0,
-                        offset: Offset(0, 0),
-                        blurRadius: 8),
-                    const BoxShadow(
-                        color: Color.fromARGB(255, 179, 179, 179),
-                        spreadRadius: 1,
-                        offset: Offset(2, 2),
-                        blurRadius: 8)
-                  ]),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 20),
-                      child: Text(
-                        'การติดดตามสถานะการโดยสาร',
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: AppColor.mainText,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Row(
-                                children: [
-                                  const Text(
-                                    'ชื่อ ',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        color: AppColor.subext,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    '${widget.firstName} ${widget.lastName}',
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        color: AppColor.subext,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
+            child: Stack(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 130,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      // ignore: prefer_const_literals_to_create_immutables
+                      boxShadow: [
+                        const BoxShadow(
+                            color: Colors.transparent,
+                            spreadRadius: 0,
+                            offset: Offset(0, 0),
+                            blurRadius: 8),
+                        const BoxShadow(
+                            color: Color.fromARGB(255, 179, 179, 179),
+                            spreadRadius: 1,
+                            offset: Offset(2, 2),
+                            blurRadius: 8)
+                      ]),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "${data['first_name']} ${data['last_name']}",
+                              style: const TextStyle(
+                                  fontSize: 20,
+                                  color: AppColor.mainText,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              'สถานะ : '
+                              '${(data['status'] == '1') || (data['status'] == '3') ? 'อยู่บนรถ' : (data['status'] == '2') || (data['status'] == '4') ? 'ลงจากรถเเล้ว' : 'ยังไม่ขึ้นรถ'}',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: AppColor.mainText,
                               ),
-                              Row(
-                                // ignore: prefer_const_literals_to_create_immutables
-                                children: [
-                                  const Text(
-                                    'สถานะ ',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        color: AppColor.subext,
-                                        fontWeight: FontWeight.bold),
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  (data['status'] == '1') ||
+                                          (data['status'] == '2')
+                                      ? 'เวลาขึ้น ${data['ridefirst']} น.'
+                                      : (data['status'] == '3') ||
+                                              (data['status'] == '4')
+                                          ? 'เวลาขึ้น ${data['ridesec']} '
+                                          : 'เวลาขึ้น -',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    color: AppColor.mainText,
                                   ),
-                                  Text(
-                                    (data == null || data['status'] == '0')
-                                        ? 'ยังไม่ได้ขึ้นรถ'
-                                        : (data != null &&
-                                                data['status'] == '1')
-                                            ? 'อยู่บนรถ'
-                                            : 'ลงจากรถเเล้ว',
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        color: AppColor.subext,
-                                        fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  (data['status'] == '1') ||
+                                          (data['status'] == '2')
+                                      ? 'เวลาลง ${data['dropfirst']} น.'
+                                      : (data['status'] == '3') ||
+                                              (data['status'] == '4')
+                                          ? 'เวลาลง ${data['dropsec']} น.'
+                                          : 'เวลาลง -',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    color: AppColor.mainText,
                                   ),
-                                ],
-                              )
-                            ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(50, 20, 0, 0),
+                          child: Image.asset(
+                            (data['status'] == '1') || (data['status'] == '3')
+                                ? 'assets/image/status-car.png'
+                                : (data['status'] == '2') ||
+                                        (data['status'] == '4')
+                                    ? 'assets/image/status-school.png'
+                                    : 'assets/image/status-home.png',
+                            scale: 5,
                           ),
-                          SizedBox(
-                            width: 50,
-                            child: (data == null || data['status'] == '0')
-                                ? Image.asset('assets/image/status-home.png')
-                                : (data != null && data['status'] == '1')
-                                    ? Image.asset('assets/image/status-car.png')
-                                    : Image.asset(
-                                        'assets/image/status-school.png'),
-                          )
-                        ],
-                      ),
+                        )
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                      onPressed: () {
+                        logout();
+                      },
+                      icon: const Icon(
+                        Icons.more_vert_sharp,
+                        color: AppColor.mainText,
+                      )),
+                )
+              ],
             ),
           );
         },
       );
     });
+  }
+
+  logout() {
+    showCupertinoModalPopup(
+        context: context,
+        builder: (context) => CupertinoActionSheet(
+              // message: const Text(
+              //   "คุณต้องการออกจากระบบหรือไม่?",
+              //   style: TextStyle(fontSize: 20),
+              // ),
+              actions: [
+                CupertinoActionSheetAction(
+                  onPressed: () {},
+                  child: const Text(
+                    "แก้ไข",
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                ),
+                Container(
+                  height: 0.1,
+                  width: 100,
+                  color: Colors.grey,
+                ),
+                CupertinoActionSheetAction(
+                  onPressed: () async {
+                    showConfirmLogout();
+                  },
+                  child: const Text(
+                    "ออกจากระบบ",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                )
+              ],
+              // cancelButton: CupertinoActionSheetAction(
+              //   child: const Text("ยกเลิก"),
+              //   onPressed: () {
+              //     Navigator.of(context).pop();
+              //   },
+              // )
+            ));
+  }
+
+  showConfirmLogout() {
+    showCupertinoModalPopup(
+        context: context,
+        builder: (context) => CupertinoActionSheet(
+            message: const Text(
+              "คุณต้องการออกจากระบบหรือไม่?",
+              style: TextStyle(fontSize: 20),
+            ),
+            actions: [
+              CupertinoActionSheetAction(
+                onPressed: () {
+                  AuthService auth = AuthService();
+                  auth.logOut();
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
+                      (route) => false);
+                },
+                child: const Text(
+                  "ยืนยัน",
+                  style: TextStyle(color: Colors.red),
+                ),
+              )
+            ],
+            cancelButton: CupertinoActionSheetAction(
+              child: const Text("ยกเลิก"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )));
   }
 }

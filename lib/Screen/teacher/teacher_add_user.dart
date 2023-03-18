@@ -1192,12 +1192,7 @@ class _AddUserPageState extends State<AddUserPage> {
           'email': user.email,
           'role': 'driver'
         });
-        await database
-            .ref()
-            .child('users')
-            .child('user_roles')
-            .child(user.email!.replaceAll('.', ','))
-            .set('driver');
+
         btnController.success();
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const LoginPage()));

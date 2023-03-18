@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:project_flutter/Component/color.dart';
+import 'package:project_flutter/Component/status_car_widget.dart';
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
@@ -185,8 +186,8 @@ class _LocationPageState extends State<LocationPage> {
       appBar: AppBar(
         backgroundColor: AppColor.main,
         title: const Text(
-          'Location',
-          style: TextStyle(color: AppColor.mainText),
+          'ตำแหน่งรถ',
+          style: TextStyle(color: AppColor.mainText, fontSize: 22),
         ),
         leading: IconButton(
           icon: const Icon(
@@ -198,22 +199,43 @@ class _LocationPageState extends State<LocationPage> {
           },
         ),
       ),
-      body: isLoading == false
-          ? GoogleMap(
-              onMapCreated: _onMapCreated,
-              rotateGesturesEnabled: true,
-              initialCameraPosition: CameraPosition(
-                target: LatLng(myLo.latitude, myLo.longitude),
-                zoom: 18,
-              ),
-              mapType: MapType.normal,
-              markers: Set<Marker>.of(markers),
-              polylines: polyLines,
-              buildingsEnabled: true,
-            )
-          : const Center(
-              child: CircularProgressIndicator(color: AppColor.mainIcon),
-            ),
+      body: Stack(
+        children: [
+          isLoading == false
+              ? GoogleMap(
+                  onMapCreated: _onMapCreated,
+                  rotateGesturesEnabled: true,
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(myLo.latitude, myLo.longitude),
+                    zoom: 18,
+                  ),
+                  mapType: MapType.normal,
+                  markers: Set<Marker>.of(markers),
+                  polylines: polyLines,
+                  buildingsEnabled: true,
+                )
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const CircularProgressIndicator(
+                        color: AppColor.mainIcon,
+                      ),
+                      // ignore: prefer_const_constructors
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Text(
+                        'กำลังค้นหาตำแหน่งรถ',
+                        style: TextStyle(
+                            fontSize: 22, color: Colors.grey.shade600),
+                      )
+                    ],
+                  ),
+                ),
+          getBusStatus(),
+        ],
+      ),
     );
   }
 }

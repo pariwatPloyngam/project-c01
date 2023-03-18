@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:project_flutter/Component/color.dart';
@@ -30,6 +31,8 @@ class TeacherHomePage extends StatefulWidget {
 
 class _TeacherHomePageState extends State<TeacherHomePage> {
   final databaseReference = FirebaseDatabase.instance.ref();
+  final _editkey = GlobalKey<FormState>();
+  String? phoneEdit;
 
   late String currentDate;
 
@@ -48,7 +51,7 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
   void getStdNum() {
     databaseReference
         .child('access')
-        .child('2023-3-14')
+        .child(currentDate)
         .orderByChild('status')
         .equalTo("1")
         .onValue
@@ -80,10 +83,17 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
   }
 
   @override
+  void dispose() {
+    getStdNum();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var heigth = MediaQuery.of(context).size.height;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           Container(
@@ -201,25 +211,14 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
                     ),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.settings,
-                                color: AppColor.mainText,
-                              )),
-                          IconButton(
-                              onPressed: () {
-                                showConfirmLogout();
-                              },
-                              icon: const Icon(
-                                Icons.logout,
-                                color: AppColor.mainText,
-                              )),
-                        ],
-                      ),
+                      child: IconButton(
+                          onPressed: () {
+                            logout();
+                          },
+                          icon: const Icon(
+                            Icons.more_vert_sharp,
+                            color: AppColor.mainText,
+                          )),
                     )
                   ],
                 ),
@@ -288,7 +287,7 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
                                     Navigator.pushNamed(context, '/location');
                                   },
                                   title: const Text(
-                                    'ตำแหน่ง',
+                                    'ตำแหน่งรถ',
                                     style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -367,11 +366,166 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
     );
   }
 
+  logout() {
+    showCupertinoModalPopup(
+        context: context,
+        builder: (context) => CupertinoActionSheet(
+              // message: const Text(
+              //   "คุณต้องการออกจากระบบหรือไม่?",
+              //   style: TextStyle(fontSize: 20),
+              // ),
+              actions: [
+                CupertinoActionSheetAction(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                              child: Container(
+                                width: 400,
+                                decoration: BoxDecoration(
+                                    color: Theme.of(context)
+                                        .dialogTheme
+                                        .backgroundColor,
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 16),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'เปลี่ยนแปลงเบอร์โทร',
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            color: AppColor.mainText),
+                                      ),
+                                      Form(
+                                        key: _editkey,
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                          child: TextFormField(
+                                              onSaved: (value) {
+                                                phoneEdit = value!;
+                                              },
+                                              decoration: const InputDecoration(
+                                                  border: InputBorder.none,
+                                                  prefixIcon: Icon(
+                                                    Icons.edit,
+                                                    color: Colors.grey,
+                                                  )),
+                                              keyboardType: TextInputType.phone,
+                                              inputFormatters: [
+                                                LengthLimitingTextInputFormatter(
+                                                    10)
+                                              ]),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 16),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        AppColor.main),
+                                                onPressed: () async {
+                                                  final user;
+                                                  if (_editkey.currentState!
+                                                      .validate()) {
+                                                    _editkey.currentState!
+                                                        .save();
+                                                    if (phoneEdit == '') {
+                                                      return;
+                                                    } else {
+                                                      try {
+                                                        await databaseReference
+                                                            .child('users')
+                                                            .child('user_data')
+                                                            .child(
+                                                                widget.user.uid)
+                                                            .update({
+                                                          'phone': phoneEdit,
+                                                        });
+                                                      } catch (e) {
+                                                        print(e);
+                                                      }
+                                                    }
+                                                  }
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  'ยืนยัน',
+                                                  style:
+                                                      TextStyle(fontSize: 18),
+                                                )),
+                                            ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.red),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  'ยกเลิก',
+                                                  style:
+                                                      TextStyle(fontSize: 18),
+                                                )),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ));
+                  },
+                  child: const Text(
+                    "แก้ไข",
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                ),
+                Container(
+                  height: 0.1,
+                  width: 100,
+                  color: Colors.grey,
+                ),
+                CupertinoActionSheetAction(
+                  onPressed: () async {
+                    showConfirmLogout();
+                  },
+                  child: const Text(
+                    "ออกจากระบบ",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                )
+              ],
+              // cancelButton: CupertinoActionSheetAction(
+              //   child: const Text("ยกเลิก"),
+              //   onPressed: () {
+              //     Navigator.of(context).pop();
+              //   },
+              // )
+            ));
+  }
+
   showConfirmLogout() {
     showCupertinoModalPopup(
         context: context,
         builder: (context) => CupertinoActionSheet(
-            message: const Text("คุณต้องการออกจากระบบหรือไม่?"),
+            message: const Text(
+              "คุณต้องการออกจากระบบหรือไม่?",
+              style: TextStyle(fontSize: 20),
+            ),
             actions: [
               CupertinoActionSheetAction(
                 onPressed: () {
@@ -383,7 +537,7 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
                       (route) => false);
                 },
                 child: const Text(
-                  "ออกจากระบบ",
+                  "ยืนยัน",
                   style: TextStyle(color: Colors.red),
                 ),
               )
