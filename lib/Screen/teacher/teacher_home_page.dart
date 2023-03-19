@@ -32,7 +32,8 @@ class TeacherHomePage extends StatefulWidget {
 class _TeacherHomePageState extends State<TeacherHomePage> {
   final databaseReference = FirebaseDatabase.instance.ref();
   final _editkey = GlobalKey<FormState>();
-  String? phoneEdit;
+  String? phoneEdit, nameEdit, lastNameEdit;
+  String? phoneText, nameText, lastNameText;
 
   late String currentDate;
 
@@ -370,124 +371,232 @@ class _TeacherHomePageState extends State<TeacherHomePage> {
     showCupertinoModalPopup(
         context: context,
         builder: (context) => CupertinoActionSheet(
-              // message: const Text(
-              //   "คุณต้องการออกจากระบบหรือไม่?",
-              //   style: TextStyle(fontSize: 20),
-              // ),
               actions: [
                 CupertinoActionSheetAction(
                   onPressed: () {
                     Navigator.pop(context);
-                    showDialog(
-                        context: context,
-                        builder: (context) => Dialog(
-                              child: Container(
-                                width: 400,
-                                decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .dialogTheme
-                                        .backgroundColor,
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 16),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'เปลี่ยนแปลงเบอร์โทร',
-                                        style: TextStyle(
-                                            fontSize: 22,
-                                            color: AppColor.mainText),
-                                      ),
-                                      Form(
-                                        key: _editkey,
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                            border: Border(
-                                              bottom: BorderSide(
-                                                color: Colors.grey,
+                    databaseReference
+                        .child("users")
+                        .child("user_data")
+                        .child(widget.user.uid)
+                        .once()
+                        .then((snapshot) {
+                      Map<dynamic, dynamic> edit =
+                          snapshot.snapshot.value as dynamic;
+
+                      phoneText = edit['phone'];
+                      nameText = edit['first_name'];
+                      lastNameText = edit['last_name'];
+
+                      showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                                child: Container(
+                                  width: 400,
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .dialogTheme
+                                          .backgroundColor,
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 16),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          'แก้ไขข้อมูลส่วนตัว',
+                                          style: TextStyle(
+                                              fontSize: 26,
+                                              color: AppColor.mainText,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Form(
+                                          key: _editkey,
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(
+                                                  color: Colors.grey,
+                                                ),
                                               ),
                                             ),
+                                            child: Column(
+                                              children: [
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    border: Border(
+                                                      bottom: BorderSide(
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  child: TextFormField(
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: AppColor
+                                                              .mainText),
+                                                      initialValue: nameText,
+                                                      onSaved: (value) {
+                                                        nameEdit = value!;
+                                                      },
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              border:
+                                                                  InputBorder
+                                                                      .none,
+                                                              prefixText:
+                                                                  'ชื่อ : '),
+                                                      keyboardType:
+                                                          TextInputType.phone,
+                                                      inputFormatters: [
+                                                        LengthLimitingTextInputFormatter(
+                                                            10)
+                                                      ]),
+                                                ),
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    border: Border(
+                                                      bottom: BorderSide(
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  child: TextFormField(
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: AppColor
+                                                              .mainText),
+                                                      initialValue:
+                                                          lastNameText,
+                                                      onSaved: (value) {
+                                                        lastNameEdit = value!;
+                                                      },
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              border:
+                                                                  InputBorder
+                                                                      .none,
+                                                              prefixText:
+                                                                  'นามสกุล : '),
+                                                      keyboardType:
+                                                          TextInputType.phone,
+                                                      inputFormatters: [
+                                                        LengthLimitingTextInputFormatter(
+                                                            10)
+                                                      ]),
+                                                ),
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    border: Border(
+                                                      bottom: BorderSide(
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  child: TextFormField(
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: AppColor
+                                                              .mainText),
+                                                      initialValue: phoneText,
+                                                      onSaved: (value) {
+                                                        phoneEdit = value!;
+                                                      },
+                                                      decoration:
+                                                          const InputDecoration(
+                                                              border:
+                                                                  InputBorder
+                                                                      .none,
+                                                              prefixText:
+                                                                  'เบอร์โทรศัพท์ : '),
+                                                      keyboardType: TextInputType.phone,
+                                                      inputFormatters: [
+                                                        LengthLimitingTextInputFormatter(
+                                                            10)
+                                                      ]),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                          child: TextFormField(
-                                              onSaved: (value) {
-                                                phoneEdit = value!;
-                                              },
-                                              decoration: const InputDecoration(
-                                                  border: InputBorder.none,
-                                                  prefixIcon: Icon(
-                                                    Icons.edit,
-                                                    color: Colors.grey,
-                                                  )),
-                                              keyboardType: TextInputType.phone,
-                                              inputFormatters: [
-                                                LengthLimitingTextInputFormatter(
-                                                    10)
-                                              ]),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 16),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        AppColor.main),
-                                                onPressed: () async {
-                                                  final user;
-                                                  if (_editkey.currentState!
-                                                      .validate()) {
-                                                    _editkey.currentState!
-                                                        .save();
-                                                    if (phoneEdit == '') {
-                                                      return;
-                                                    } else {
-                                                      try {
-                                                        await databaseReference
-                                                            .child('users')
-                                                            .child('user_data')
-                                                            .child(
-                                                                widget.user.uid)
-                                                            .update({
-                                                          'phone': phoneEdit,
-                                                        });
-                                                      } catch (e) {
-                                                        print(e);
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 16),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              AppColor.main),
+                                                  onPressed: () async {
+                                                    if (_editkey.currentState!
+                                                        .validate()) {
+                                                      _editkey.currentState!
+                                                          .save();
+                                                      if (phoneEdit == '') {
+                                                        return;
+                                                      } else {
+                                                        try {
+                                                          await databaseReference
+                                                              .child('users')
+                                                              .child(
+                                                                  'user_data')
+                                                              .child(widget
+                                                                  .user.uid)
+                                                              .update({
+                                                            'phone': phoneEdit,
+                                                            'first_name':
+                                                                nameEdit,
+                                                            'last_name':
+                                                                lastNameEdit
+                                                          });
+                                                        } catch (e) {
+                                                          print(e);
+                                                        }
                                                       }
                                                     }
-                                                  }
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text(
-                                                  'ยืนยัน',
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(
+                                                    'ยืนยัน',
+                                                    style:
+                                                        TextStyle(fontSize: 18),
+                                                  )),
+                                              ElevatedButton(
                                                   style:
-                                                      TextStyle(fontSize: 18),
-                                                )),
-                                            ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.red),
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text(
-                                                  'ยกเลิก',
-                                                  style:
-                                                      TextStyle(fontSize: 18),
-                                                )),
-                                          ],
-                                        ),
-                                      )
-                                    ],
+                                                      ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              Colors.red),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(
+                                                    'ยกเลิก',
+                                                    style:
+                                                        TextStyle(fontSize: 18),
+                                                  )),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ));
+                              ));
+                    });
                   },
                   child: const Text(
                     "แก้ไข",
